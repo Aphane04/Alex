@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureRide — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --forest:#0b2e13; --canopy:#1a5c32; --leaf:#2ea85f; --mint:#4ade80;
+  --sage:#d1fae5; --cream:#f6faf7; --white:#ffffff; --ink:#0c1a10;
+  --slate:#374151; --muted:#6b7280; --border:#d1d5db; --danger:#dc2626;
+  --danger-bg:#fef2f2; --success:#059669;
+  --font-display:'Syne',sans-serif; --font-body:'DM Sans',sans-serif;
+  --r-sm:8px; --r-xl:24px;
+  --shadow-lift:0 20px 40px rgba(11,46,19,.15),0 4px 12px rgba(11,46,19,.1);
+}
+body { font-family:var(--font-body); background:var(--cream); color:var(--ink); min-height:100vh; display:grid; place-items:center; padding:24px 16px; }
+body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 900px 700px at 10% 20%,rgba(46,168,95,.08) 0%,transparent 60%),radial-gradient(ellipse 600px 500px at 90% 80%,rgba(11,46,19,.06) 0%,transparent 60%); pointer-events:none; z-index:0; }
+.card { position:relative; z-index:1; width:100%; max-width:960px; background:var(--white); border-radius:var(--r-xl); box-shadow:var(--shadow-lift); overflow:hidden; display:grid; grid-template-columns:340px 1fr; min-height:580px; }
+.panel-left { background:linear-gradient(160deg,var(--forest) 0%,var(--canopy) 100%); padding:48px 36px; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden; }
+.panel-left::before { content:''; position:absolute; width:320px; height:320px; border-radius:50%; border:40px solid rgba(255,255,255,.04); top:-80px; right:-100px; }
+.panel-left::after { content:''; position:absolute; width:200px; height:200px; border-radius:50%; border:28px solid rgba(78,222,128,.08); bottom:60px; left:-60px; }
+.brand { position:relative; z-index:1; }
+.brand-logo { display:flex; align-items:center; gap:10px; margin-bottom:48px; }
+.brand-logo-mark { width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,var(--leaf),var(--mint)); display:grid; place-items:center; font-family:var(--font-display); font-weight:800; font-size:16px; color:var(--forest); }
+.brand-logo-text { font-family:var(--font-display); font-weight:800; font-size:18px; color:var(--white); }
+.brand-headline { font-family:var(--font-display); font-weight:700; font-size:28px; line-height:1.18; color:var(--white); letter-spacing:-0.5px; margin-bottom:14px; }
+.brand-headline em { font-style:normal; color:var(--mint); }
+.brand-desc { font-size:14px; line-height:1.65; color:rgba(255,255,255,.6); }
+.left-features { position:relative; z-index:1; display:flex; flex-direction:column; gap:12px; }
+.left-feature { display:flex; align-items:center; gap:10px; font-size:13px; color:rgba(255,255,255,.75); }
+.left-feature-icon { width:28px; height:28px; border-radius:8px; background:rgba(255,255,255,.1); display:grid; place-items:center; }
+.left-footer { position:relative; z-index:1; font-size:12px; color:rgba(255,255,255,.35); }
+.panel-right { padding:48px 44px; display:flex; flex-direction:column; justify-content:center; }
+.form-title { font-family:var(--font-display); font-weight:700; font-size:24px; color:var(--ink); margin-bottom:6px; }
+.form-sub { font-size:13.5px; color:var(--muted); margin-bottom:28px; line-height:1.5; }
+.form-sub a { color:var(--leaf); font-weight:700; text-decoration:none; }
+.form-sub a:hover { text-decoration:underline; }
+.form { display:flex; flex-direction:column; gap:16px; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.field-label { font-size:12.5px; font-weight:600; color:var(--slate); text-transform:uppercase; }
+.field-wrap { position:relative; }
+.field-input { width:100%; height:46px; border:1.5px solid var(--border); border-radius:var(--r-sm); padding:0 42px 0 14px; font-family:var(--font-body); font-size:14px; color:var(--ink); background:var(--white); outline:none; transition:border-color .18s,box-shadow .18s; }
+.field-input:focus { border-color:var(--leaf); box-shadow:0 0 0 3px rgba(46,168,95,.12); }
+.field-input.error { border-color:var(--danger); }
+.field-error { font-size:11.5px; color:var(--danger); display:none; }
+.field-error.visible { display:block; }
+.pw-toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); border:none; background:none; cursor:pointer; font-size:16px; color:var(--muted); padding:4px; line-height:1; }
+.forgot-link { text-align:right; font-size:12.5px; }
+.forgot-link a { color:var(--leaf); text-decoration:none; font-weight:600; }
+.forgot-link a:hover { text-decoration:underline; }
+.btn-submit { height:48px; border:none; border-radius:var(--r-sm); background:linear-gradient(135deg,var(--canopy),var(--forest)); color:white; font-family:var(--font-display); font-size:15px; font-weight:700; cursor:pointer; transition:all .18s; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:4px; }
+.btn-submit:hover:not(:disabled) { background:linear-gradient(135deg,var(--leaf),var(--canopy)); transform:translateY(-1px); box-shadow:0 8px 24px rgba(11,46,19,.28); }
+.btn-submit:disabled { opacity:.6; cursor:not-allowed; }
+.spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.3); border-top-color:white; border-radius:50%; animation:spin .65s linear infinite; display:none; }
+.btn-submit.loading .spinner { display:block; }
+.btn-submit.loading .btn-text { display:none; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.alert { padding:12px 14px; border-radius:var(--r-sm); font-size:13.5px; display:none; align-items:center; gap:8px; margin-bottom:4px; animation:alertIn .2s ease; }
+@keyframes alertIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+.alert.visible { display:flex; }
+.alert-error { background:var(--danger-bg); color:var(--danger); border:1px solid rgba(220,38,38,.2); }
+.alert-success { background:#ecfdf5; color:var(--success); border:1px solid rgba(5,150,105,.2); }
+
+/* Redirect banner shown briefly before redirect */
+.redirect-banner { display:none; position:fixed; top:0; left:0; right:0; background:var(--forest); color:white; text-align:center; padding:14px; font-family:var(--font-display); font-weight:600; font-size:15px; z-index:999; animation:slideDown .3s ease; }
+.redirect-banner.visible { display:block; }
+@keyframes slideDown { from { transform:translateY(-100%); } to { transform:translateY(0); } }
+
+.divider { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:12px; }
+.divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border); }
+.btn-register { height:44px; border:1.5px solid var(--border); border-radius:var(--r-sm); background:var(--white); color:var(--slate); font-family:var(--font-body); font-size:14px; font-weight:600; cursor:pointer; transition:all .18s; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; }
+.btn-register:hover { border-color:var(--leaf); color:var(--canopy); }
+
+@media (max-width:760px) { .card { grid-template-columns:1fr; } .panel-left { display:none; } .panel-right { padding:32px 24px; } }
+</style>
+</head>
+<body>
+
+<div class="redirect-banner" id="redirectBanner"></div>
+
+<div class="card">
+  <div class="panel-left">
+    <div class="brand">
+      <div class="brand-logo">
+        <div class="brand-logo-mark">SR</div>
+        <span class="brand-logo-text">SecureRide</span>
+      </div>
+      <h2 class="brand-headline">Safety &amp; trust<br>on every <em>journey.</em></h2>
+      <p class="brand-desc">The most secure ride platform in South Africa.</p>
+    </div>
+    <div class="left-features">
+      <div class="left-feature"><div class="left-feature-icon">🔒</div> Biometric ID verification</div>
+      <div class="left-feature"><div class="left-feature-icon">🚗</div> Verified drivers only</div>
+      <div class="left-feature"><div class="left-feature-icon">📍</div> Real-time trip tracking</div>
+      <div class="left-feature"><div class="left-feature-icon">🆘</div> Emergency SOS system</div>
+    </div>
+    <div class="left-footer">© 2026 SecureRide · All rights reserved</div>
+  </div>
+
+  <div class="panel-right">
+    <div class="form-title">Welcome back</div>
+    <p class="form-sub">Sign in with your email and password. <a href="register.html">No account? Register →</a></p>
+
+    <div class="alert alert-error"   id="login-error">  <span>⚠</span><span id="login-error-msg"></span></div>
+    <div class="alert alert-success" id="login-success"><span>✅</span><span id="login-success-msg"></span></div>
+
+    <form class="form" id="loginForm" onsubmit="handleLogin(event)" novalidate>
+      <div class="field">
+        <label class="field-label">Email Address</label>
+        <div class="field-wrap">
+          <input class="field-input" type="email" id="l-email" placeholder="you@example.com" autocomplete="email" oninput="clearErr('l-email','err-l-email')">
+        </div>
+        <span class="field-error" id="err-l-email">Enter your registered email</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Password</label>
+        <div class="field-wrap">
+          <input class="field-input" type="password" id="l-password" placeholder="Your password" autocomplete="current-password" style="padding-right:42px" oninput="clearErr('l-password','err-l-password')">
+          <button type="button" class="pw-toggle" onclick="togglePw()" id="pwBtn">👁</button>
+        </div>
+        <span class="field-error" id="err-l-password">Password is required</span>
+      </div>
+
+      <div class="forgot-link"><a href="register.html">Forgot password? Re-register →</a></div>
+
+      <button type="submit" class="btn-submit" id="login-btn">
+        <div class="spinner"></div>
+        <span class="btn-text">Sign In</span>
+      </button>
+
+      <div class="divider">or</div>
+
+      <a href="register.html" class="btn-register">✍️ &nbsp;Create a new account</a>
+    </form>
+  </div>
+</div>
+
+<script>
+function getUsers() { return JSON.parse(localStorage.getItem('sr_users') || '[]'); }
+
+function clearErr(inputId, errId) {
+  document.getElementById(inputId).classList.remove('error');
+  document.getElementById(errId).classList.remove('visible');
+}
+
+function togglePw() {
+  const inp = document.getElementById('l-password');
+  const btn = document.getElementById('pwBtn');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+// ─── KEY FIX: route user to correct page based on accountType ───
+function getDestination(accountType) {
+  switch (accountType) {
+    case 'driver':    return 'driver.html';
+    case 'admin':     return 'admin.html';
+    case 'passenger':
+    default:          return 'passenger.html';
+  }
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  document.getElementById('login-error').classList.remove('visible');
+  document.getElementById('login-success').classList.remove('visible');
+
+  const email    = document.getElementById('l-email').value.trim();
+  const password = document.getElementById('l-password').value;
+  let valid = true;
+
+  if (!email)    { document.getElementById('l-email').classList.add('error');    document.getElementById('err-l-email').classList.add('visible');    valid = false; }
+  if (!password) { document.getElementById('l-password').classList.add('error'); document.getElementById('err-l-password').classList.add('visible'); valid = false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('login-btn');
+  btn.classList.add('loading'); btn.disabled = true;
+
+  setTimeout(() => {
+    btn.classList.remove('loading'); btn.disabled = false;
+
+    const users = getUsers();
+    const user  = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+
+    if (!user) {
+      document.getElementById('login-error-msg').textContent = 'Incorrect email or password. Please try again.';
+      document.getElementById('login-error').classList.add('visible');
+      document.getElementById('l-email').classList.add('error');
+      document.getElementById('l-password').classList.add('error');
+      return;
+    }
+
+    // Save session
+    localStorage.setItem('sr_current_user', JSON.stringify(user));
+
+    // Show success alert then redirect
+    const dest = getDestination(user.accountType);
+    const label = { passenger:'Passenger Dashboard', driver:'Driver Dashboard', admin:'Admin Dashboard' }[user.accountType] || 'Dashboard';
+
+    document.getElementById('login-success-msg').textContent = `Welcome back, ${user.name}! Taking you to your ${label}…`;
+    document.getElementById('login-success').classList.add('visible');
+
+    // Show top banner
+    const banner = document.getElementById('redirectBanner');
+    banner.textContent = `✅ Logged in as ${user.accountType.toUpperCase()} — redirecting to ${label}…`;
+    banner.classList.add('visible');
+
+    setTimeout(() => { window.location.href = dest; }, 1200);
+  }, 800);
+}
+
+// If already logged in, redirect immediately
+(function() {
+  const saved = localStorage.getItem('sr_current_user');
+  if (saved) {
+    const user = JSON.parse(saved);
+    window.location.href = getDestination(user.accountType);
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureRide — Passenger Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --forest: #0b2e13;
+  --canopy: #1a5c32;
+  --leaf: #2ea85f;
+  --mint: #4ade80;
+  --sage: #d1fae5;
+  --cream: #f6faf7;
+  --white: #ffffff;
+  --ink: #0c1a10;
+  --slate: #374151;
+  --muted: #6b7280;
+  --border: #d1d5db;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --success: #059669;
+  --warning: #f59e0b;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.navbar {
+  background: var(--white);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--leaf), var(--mint));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--forest);
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--forest);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--slate);
+}
+
+.user-type-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--sage);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.logout-btn {
+  padding: 8px 16px;
+  border: 1.5px solid var(--border);
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 24px;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--sage);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-details {
+  display: grid;
+  gap: 12px;
+}
+
+.profile-row {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-label {
+  font-weight: 600;
+  width: 120px;
+  color: var(--muted);
+}
+
+.profile-value {
+  flex: 1;
+  color: var(--ink);
+}
+
+.edit-btn {
+  background: var(--leaf);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.delete-account-btn {
+  background: var(--danger);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 16px;
+  width: 100%;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--slate);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--leaf);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--canopy), var(--forest));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+
+.trip-item, .contact-item {
+  background: var(--cream);
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trip-details, .contact-details {
+  flex: 1;
+}
+
+.trip-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.status-pending { background: #fef3c7; color: #92400e; }
+.status-accepted { background: #d1fae5; color: var(--success); }
+.status-completed { background: #dbeafe; color: #1e40af; }
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--muted);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.close-modal {
+  cursor: pointer;
+  font-size: 24px;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(20px); }
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo">
+    <div class="logo-mark">SR</div>
+    <span class="logo-text">SecureRide</span>
+  </div>
+  <div class="user-info">
+    <span class="user-name" id="navUserName"></span>
+    <span class="user-type-badge" id="navUserType"></span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<div class="container" id="appContainer"></div>
+
+<script>
+  let currentUser = null;
+  let trips = [];
+  let emergencyContacts = [];
+
+  function loadData() {
+    const savedUser = localStorage.getItem('sr_current_user');
+    if (!savedUser) {
+      window.location.href = 'login.html';
+      return;
+    }
+    currentUser = JSON.parse(savedUser);
+    
+    if (currentUser.accountType !== 'passenger') {
+      alert('This page is for passengers only. Redirecting to login.');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    const savedTrips = localStorage.getItem('sr_trips');
+    if (savedTrips) trips = JSON.parse(savedTrips);
+    
+    const savedContacts = localStorage.getItem('sr_contacts_' + currentUser.id);
+    if (savedContacts) emergencyContacts = JSON.parse(savedContacts);
+    
+    renderDashboard();
+  }
+
+  function saveTrips() {
+    localStorage.setItem('sr_trips', JSON.stringify(trips));
+  }
+
+  function saveContacts() {
+    localStorage.setItem('sr_contacts_' + currentUser.id, JSON.stringify(emergencyContacts));
+  }
+
+  function renderDashboard() {
+    const container = document.getElementById('appContainer');
+    document.getElementById('navUserName').textContent = `${currentUser.name} ${currentUser.surname}`;
+    document.getElementById('navUserType').textContent = currentUser.accountType.toUpperCase();
+    
+    container.innerHTML = `
+      <div class="dashboard-grid">
+        ${!currentUser.isVerified ? `
+  <div class="card" style="border:2px solid var(--danger); background:var(--danger-bg); grid-column: 1 / -1;">
+    <div class="card-title">🚨 URGENT: Verification Required</div>
+    <p style="font-size:14px; margin-bottom:12px;">
+      Please upload your ID document to verify your account. You may be restricted from using some features until verified.
+    </p>
+    <input type="file" id="idUpload" accept="image/*,.pdf" style="margin-bottom:12px;">
+    <button class="btn-primary" onclick="uploadID()">Upload ID</button>
+  </div>
+` : ''}
+        <div>
+          <div class="card">
+            <div class="card-title">
+              👤 My Profile
+              <button class="edit-btn" onclick="openEditProfileModal()">Edit</button>
+            </div>
+            <div class="profile-details">
+              <div class="profile-row"><span class="profile-label">Name:</span><span class="profile-value">${currentUser.name} ${currentUser.surname}</span></div>
+              <div class="profile-row"><span class="profile-label">Email:</span><span class="profile-value">${currentUser.email}</span></div>
+              <div class="profile-row"><span class="profile-label">Phone:</span><span class="profile-value">${currentUser.phone}</span></div>
+              <div class="profile-row"><span class="profile-label">ID Number:</span><span class="profile-value">${currentUser.idNumber}</span></div>
+              <div class="profile-row"><span class="profile-label">Account:</span><span class="profile-value">${currentUser.accountType}</span></div>
+            </div>
+            <button class="delete-account-btn" onclick="deleteAccount()">Delete My Account</button>
+          </div>
+          
+          <div class="card">
+            <div class="card-title">
+              📞 Emergency Contacts
+              <button class="edit-btn" onclick="openAddContactModal()">+ Add</button>
+            </div>
+            <div id="contactsList"></div>
+          </div>
+        </div>
+        
+        <div>
+          <div class="card">
+            <div class="card-title">🚗 Book a Trip</div>
+            <form id="bookTripForm">
+              <div class="form-group"><label>Current Location</label><input type="text" id="pickupLocation" placeholder="e.g., Cape Town Station" required></div>
+              <div class="form-group"><label>Destination</label><input type="text" id="destination" placeholder="e.g., Waterfront" required></div>
+              <button type="submit" class="btn-primary">Book Trip</button>
+            </form>
+          </div>
+          
+          <div class="card">
+            <div class="card-title">📋 My Trips</div>
+            <div id="passengerTripsList"></div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    renderContacts();
+    renderTrips();
+    
+    document.getElementById('bookTripForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      bookTrip();
+    });
+  }
+  
+  function renderContacts() {
+    const container = document.getElementById('contactsList');
+    if (emergencyContacts.length === 0) {
+      container.innerHTML = '<div class="empty-state">No emergency contacts added</div>';
+      return;
+    }
+    container.innerHTML = emergencyContacts.map((contact, idx) => `
+      <div class="contact-item">
+        <div class="contact-details">
+          <strong>${contact.name}</strong><br>
+          ${contact.phone}<br>
+          <small>${contact.relationship || 'Contact'}</small>
+        </div>
+        <div>
+          <button class="edit-btn" style="background:var(--warning);margin-right:8px;" onclick="editContact(${idx})">Edit</button>
+          <button class="edit-btn" style="background:var(--danger);" onclick="deleteContact(${idx})">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  function renderTrips() {
+    const userTrips = trips.filter(t => t.passengerId === currentUser.id);
+    const container = document.getElementById('passengerTripsList');
+    if (userTrips.length === 0) {
+      container.innerHTML = '<div class="empty-state">No trips booked yet</div>';
+      return;
+    }
+    container.innerHTML = userTrips.map(trip => `
+      <div class="trip-item">
+        <div class="trip-details">
+          <strong>From:</strong> ${trip.pickup}<br>
+          <strong>To:</strong> ${trip.destination}<br>
+          <strong>Driver:</strong> ${trip.driverName || 'Not assigned yet'}<br>
+          <span class="trip-status status-${trip.status}">${trip.status.toUpperCase()}</span>
+        </div>
+        ${trip.status === 'pending' ? `<button class="edit-btn" style="background:var(--danger);" onclick="cancelTrip(${trip.id})">Cancel</button>` : ''}
+      </div>
+    `).join('');
+  }
+  
+  function bookTrip() {
+    const pickup = document.getElementById('pickupLocation').value.trim();
+    const destination = document.getElementById('destination').value.trim();
+    
+    if (!pickup || !destination) {
+      showNotification('Please enter both locations', 'error');
+      return;
+    }
+    
+    const newTrip = {
+      id: Date.now(),
+
+  // ✅ REQUIRED DATA (your requested code properly inserted)
+  passengerName: currentUser.name,
+  passengerPhone: currentUser.phone,
+  pickup,
+  destination,
+  status: 'pending',
+
+  // ✅ KEEP EXISTING SYSTEM WORKING
+  passengerId: currentUser.id,
+  driverId: null,
+  driverName: null,
+  createdAt: new Date().toISOString()
+    };
+    
+    trips.push(newTrip);
+    saveTrips();
+    renderTrips();
+    document.getElementById('bookTripForm').reset();
+    showNotification('Trip booked successfully!', 'success');
+  }
+  
+  function cancelTrip(tripId) {
+    if (confirm('Are you sure you want to cancel this trip?')) {
+      trips = trips.filter(t => t.id !== tripId);
+      saveTrips();
+      renderTrips();
+      showNotification('Trip cancelled', 'success');
+    }
+  }
+  
+  function openAddContactModal() {
+    const modalHtml = `
+      <div class="modal active" id="contactModal">
+        <div class="modal-content">
+          <div class="modal-header"><h3>Add Emergency Contact</h3><span class="close-modal" onclick="closeModal()">&times;</span></div>
+          <form id="addContactForm">
+            <div class="form-group"><label>Full Name</label><input type="text" id="contactName" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="contactPhone" required></div>
+            <div class="form-group"><label>Relationship</label><input type="text" id="contactRelation" placeholder="e.g., Parent, Sibling, Friend"></div>
+            <button type="submit" class="btn-primary">Add Contact</button>
+          </form>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.getElementById('addContactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('contactName').value.trim();
+      const phone = document.getElementById('contactPhone').value.trim();
+      const relationship = document.getElementById('contactRelation').value.trim();
+      if (name && phone) {
+        emergencyContacts.push({ name, phone, relationship });
+        saveContacts();
+        renderContacts();
+        closeModal();
+        showNotification('Emergency contact added', 'success');
+      }
+    });
+  }
+  
+  function editContact(index) {
+    const contact = emergencyContacts[index];
+    const modalHtml = `
+      <div class="modal active" id="contactModal">
+        <div class="modal-content">
+          <div class="modal-header"><h3>Edit Emergency Contact</h3><span class="close-modal" onclick="closeModal()">&times;</span></div>
+          <form id="editContactForm">
+            <div class="form-group"><label>Full Name</label><input type="text" id="contactName" value="${contact.name}" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="contactPhone" value="${contact.phone}" required></div>
+            <div class="form-group"><label>Relationship</label><input type="text" id="contactRelation" value="${contact.relationship || ''}"></div>
+            <button type="submit" class="btn-primary">Update Contact</button>
+          </form>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.getElementById('editContactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      emergencyContacts[index] = {
+        name: document.getElementById('contactName').value.trim(),
+        phone: document.getElementById('contactPhone').value.trim(),
+        relationship: document.getElementById('contactRelation').value.trim()
+      };
+      saveContacts();
+      renderContacts();
+      closeModal();
+      showNotification('Contact updated', 'success');
+    });
+  }
+  
+  function deleteContact(index) {
+    if (confirm('Remove this emergency contact?')) {
+      emergencyContacts.splice(index, 1);
+      saveContacts();
+      renderContacts();
+      showNotification('Contact removed', 'success');
+    }
+  }
+  
+  function openEditProfileModal() {
+    const modalHtml = `
+      <div class="modal active" id="profileModal">
+        <div class="modal-content">
+          <div class="modal-header"><h3>Edit Profile</h3><span class="close-modal" onclick="closeModal()">&times;</span></div>
+          <form id="editProfileForm">
+            <div class="form-group"><label>First Name</label><input type="text" id="editName" value="${currentUser.name}" required></div>
+            <div class="form-group"><label>Surname</label><input type="text" id="editSurname" value="${currentUser.surname}" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="editPhone" value="${currentUser.phone}" required></div>
+            <div class="form-group"><label>Email</label><input type="email" id="editEmail" value="${currentUser.email}" required></div>
+            <button type="submit" class="btn-primary">Update Profile</button>
+          </form>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.getElementById('editProfileForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      currentUser.name = document.getElementById('editName').value.trim();
+      currentUser.surname = document.getElementById('editSurname').value.trim();
+      currentUser.phone = document.getElementById('editPhone').value.trim();
+      currentUser.email = document.getElementById('editEmail').value.trim();
+      
+      const users = JSON.parse(localStorage.getItem('sr_users') || '[]');
+      const userIndex = users.findIndex(u => u.id === currentUser.id);
+      if (userIndex !== -1) {
+        users[userIndex] = currentUser;
+        localStorage.setItem('sr_users', JSON.stringify(users));
+      }
+      localStorage.setItem('sr_current_user', JSON.stringify(currentUser));
+      closeModal();
+      renderDashboard();
+      showNotification('Profile updated successfully!', 'success');
+    });
+  }
+  
+  function deleteAccount() {
+    if (confirm('⚠️ WARNING: This will permanently delete your account and all your data. Are you sure?')) {
+      const users = JSON.parse(localStorage.getItem('sr_users') || '[]');
+      const filteredUsers = users.filter(u => u.id !== currentUser.id);
+      localStorage.setItem('sr_users', JSON.stringify(filteredUsers));
+      
+      trips = trips.filter(t => t.passengerId !== currentUser.id);
+      saveTrips();
+      
+      localStorage.removeItem('sr_current_user');
+      localStorage.removeItem('sr_contacts_' + currentUser.id);
+      window.location.href = 'login.html';
+    }
+  }
+  
+  function closeModal() {
+    const modal = document.querySelector('.modal');
+    if (modal) modal.remove();
+  }
+  
+  function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    const bgColor = type === 'success' ? 'var(--forest)' : 'var(--danger)';
+    notification.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: ${bgColor};
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      z-index: 1000;
+      animation: fadeInOut 3s ease;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+  }
+  function uploadID() {
+  const fileInput = document.getElementById('idUpload');
+
+  if (!fileInput || !fileInput.files.length) {
+    showNotification('Please select a document first', 'error');
+    return;
+  }
+
+  // Simulate upload (since no backend)
+  currentUser.isVerified = true;
+
+  // Update users list
+  const users = JSON.parse(localStorage.getItem('sr_users') || '[]');
+  const index = users.findIndex(u => u.id === currentUser.id);
+  if (index !== -1) {
+    users[index] = currentUser;
+    localStorage.setItem('sr_users', JSON.stringify(users));
+  }
+
+  // Update session
+  localStorage.setItem('sr_current_user', JSON.stringify(currentUser));
+
+  renderDashboard();
+  showNotification('Verification successful ✅', 'success');
+}
+  
+  function logout() {
+    localStorage.removeItem('sr_current_user');
+    window.location.href = 'login.html';
+  }
+  
+  window.openEditProfileModal = openEditProfileModal;
+  window.deleteAccount = deleteAccount;
+  window.openAddContactModal = openAddContactModal;
+  window.editContact = editContact;
+  window.deleteContact = deleteContact;
+  window.cancelTrip = cancelTrip;
+  window.closeModal = closeModal;
+  window.logout = logout;
+  
+  loadData();
+</script>
+</body>
+</html>

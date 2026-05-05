@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureRide — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --forest: #0b2e13;
+  --canopy: #1a5c32;
+  --leaf: #2ea85f;
+  --mint: #4ade80;
+  --sage: #d1fae5;
+  --cream: #f6faf7;
+  --white: #ffffff;
+  --ink: #0c1a10;
+  --slate: #374151;
+  --muted: #6b7280;
+  --border: #d1d5db;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --success: #059669;
+  --warning: #f59e0b;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.navbar {
+  background: var(--white);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--leaf), var(--mint));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--forest);
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--forest);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--slate);
+}
+
+.user-type-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #fef3c7;
+  font-size: 12px;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.logout-btn {
+  padding: 8px 16px;
+  border: 1.5px solid var(--border);
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.stat-number {
+  font-size: 36px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--forest);
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 24px;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--sage);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-details {
+  display: grid;
+  gap: 12px;
+}
+
+.profile-row {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-label {
+  font-weight: 600;
+  width: 120px;
+  color: var(--muted);
+}
+
+.profile-value {
+  flex: 1;
+  color: var(--ink);
+}
+
+.edit-btn {
+  background: var(--leaf);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.delete-btn {
+  background: var(--danger);
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.delete-account-btn {
+  background: var(--danger);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 16px;
+  width: 100%;
+  font-weight: 600;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  color: var(--leaf);
+  border-bottom: 2px solid var(--leaf);
+  margin-bottom: -2px;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+.users-table, .trips-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th, .trips-table th,
+.users-table td, .trips-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.users-table th, .trips-table th {
+  background: var(--cream);
+  font-weight: 600;
+  color: var(--slate);
+  font-size: 13px;
+}
+
+.users-table tr:hover, .trips-table tr:hover {
+  background: var(--cream);
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.type-badge.driver { background: #dbeafe; color: #1d4ed8; }
+.type-badge.passenger { background: var(--sage); color: var(--forest); }
+.type-badge.admin { background: #fef3c7; color: #92400e; }
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-pending { background: #fef3c7; color: #92400e; }
+.status-accepted { background: #d1fae5; color: var(--success); }
+.status-completed { background: #dbeafe; color: #1e40af; }
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.close-modal {
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--slate);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: var(--leaf);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--canopy), var(--forest));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+
+.search-box {
+  margin-bottom: 20px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(20px); }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .users-table, .trips-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo">
+    <div class="logo-mark">SR</div>
+    <span class="logo-text">SecureRide</span>
+  </div>
+  <div class="user-info">
+    <span class="user-name" id="navUserName"></span>
+    <span class="user-type-badge" id="navUserType"></span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<div class="container" id="appContainer"></div>
+
+<script>
+  let currentUser = null;
+  let allUsers = [];
+  let allTrips = [];
+
+  let users = [];
+  let trips = [];
+
+  function loadData() {
+    const savedUser = localStorage.getItem('sr_current_user');
+    if (!savedUser) {
+      window.location.href = 'login.html';
+      return;
+    }
+    currentUser = JSON.parse(savedUser);
+    
+    if (currentUser.accountType !== 'admin') {
+      alert('This page is for admins only. Redirecting to login.');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    try {
+  allUsers = JSON.parse(localStorage.getItem('sr_users')) || [];
+  users = allUsers; // ✅ sync with new code
+} catch {
+  allUsers = [];
+  users = [];
+}
+
+try {
+  allTrips = JSON.parse(localStorage.getItem('sr_trips')) || [];
+  trips = allTrips; // ✅ sync with new code
+} catch {
+  allTrips = [];
+  trips = [];
+}
+    
+    renderDashboard();
+  }
+
+  function saveUsers() {
+    localStorage.setItem('sr_users', JSON.stringify(allUsers));
+  }
+
+  function saveTrips() {
+    localStorage.setItem('sr_trips', JSON.stringify(allTrips));
+  }
+
+  function renderDashboard() {
+    const container = document.getElementById('appContainer');
+    document.getElementById('navUserName').textContent = `${currentUser.name} ${currentUser.surname}`;
+    document.getElementById('navUserType').textContent = currentUser.accountType.toUpperCase();
+    
+    const drivers = allUsers.filter(u => u.accountType === 'driver');
+    const passengers = allUsers.filter(u => u.accountType === 'passenger');
+    const pendingTrips = allTrips.filter(t => t.status === 'pending');
+    const completedTrips = allTrips.filter(t => t.status === 'completed');
+    
+    container.innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number">${drivers.length}</div><div class="stat-label">Total Drivers</div></div>
+        <div class="stat-card"><div class="stat-number">${passengers.length}</div><div class="stat-label">Total Passengers</div></div>
+        <div class="stat-card"><div class="stat-number">${allTrips.length}</div><div class="stat-label">Total Trips</div></div>
+        <div class="stat-card"><div class="stat-number">${completedTrips.length}</div><div class="stat-label">Completed Trips</div></div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">
+          👤 My Profile
+          <button class="edit-btn" onclick="openEditProfileModal()">Edit</button>
+        </div>
+        <div class="profile-details">
+          <div class="profile-row"><span class="profile-label">Name:</span><span class="profile-value">${currentUser.name} ${currentUser.surname}</span></div>
+          <div class="profile-row"><span class="profile-label">Email:</span><span class="profile-value">${currentUser.email}</span></div>
+          <div class="profile-row"><span class="profile-label">Phone:</span><span class="profile-value">${currentUser.phone}</span></div>
+          <div class="profile-row"><span class="profile-label">ID Number:</span><span class="profile-value">${currentUser.idNumber}</span></div>
+          <div class="profile-row"><span class="profile-label">Account:</span><span class="profile-value">${currentUser.accountType}</span></div>
+        </div>
+        <button class="delete-account-btn" onclick="deleteAdminAccount()">Delete My Account</button>
+      </div>
+      
+      <div class="card">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('users')">👥 Users Management</button>
+          <button class="tab-btn" onclick="switchTab('trips')">🚗 Trips Overview</button>
+        </div>
+        
+        <div id="usersTab" class="tab-pane active">
+          <div class="search-box">
+            <input type="text" id="userSearch" placeholder="Search by name, email or phone..." onkeyup="filterUsers()">
+          </div>
+          <div id="usersTableContainer"></div>
+        </div>
+        
+        <div id="tripsTab" class="tab-pane">
+          <div class="search-box">
+            <input type="text" id="tripSearch" placeholder="Search by passenger, driver, location..." onkeyup="filterTrips()">
+          </div>
+          <div id="tripsTableContainer"></div>
+        </div>
+      </div>
+    `;
+    
+    renderUsersTable();
+    renderTripsTable();
+  }
+  
+  function renderUsersTable() {
+    const searchTerm = document.getElementById('userSearch')?.value.toLowerCase() || '';
+    const filteredUsers = allUsers.filter(u => 
+      u.name.toLowerCase().includes(searchTerm) ||
+      u.surname.toLowerCase().includes(searchTerm) ||
+      u.email.toLowerCase().includes(searchTerm) ||
+      u.phone.includes(searchTerm)
+    );
+    
+    const container = document.getElementById('usersTableContainer');
+    if (filteredUsers.length === 0) {
+      container.innerHTML = '<div class="empty-state">No users found</div>';
+      return;
+    }
+    
+    container.innerHTML = `
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>ID Number</th>
+            <th>Account Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filteredUsers.map(user => `
+            <tr>
+              <td>${user.id}</td>
+              <td><strong>${user.name} ${user.surname}</strong></td>
+              <td>${user.email}</td>
+              <td>${user.phone}</td>
+              <td>${user.idNumber}</td>
+              <td><span class="type-badge ${user.accountType}">${user.accountType}</span></td>
+              <td class="action-buttons">
+                <button class="edit-btn" style="background:var(--warning);" onclick="openEditUserModal(${user.id})">Edit</button>
+                ${user.id !== currentUser.id ? `<button class="delete-btn" onclick="deleteUser(${user.id})">Delete</button>` : ''}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+  
+  function renderTripsTable() {
+    const searchTerm = document.getElementById('tripSearch')?.value.toLowerCase() || '';
+    const filteredTrips = allTrips.filter(t => 
+      (t.passengerName && t.passengerName.toLowerCase().includes(searchTerm)) ||
+      (t.driverName && t.driverName.toLowerCase().includes(searchTerm)) ||
+      t.pickup.toLowerCase().includes(searchTerm) ||
+      t.destination.toLowerCase().includes(searchTerm)
+    );
+    
+    const container = document.getElementById('tripsTableContainer');
+    if (filteredTrips.length === 0) {
+      container.innerHTML = '<div class="empty-state">No trips found</div>';
+      return;
+    }
+    
+    container.innerHTML = `
+      <table class="trips-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Passenger</th>
+            <th>Passenger Phone</th>
+            <th>Driver</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filteredTrips.map(trip => `
+            <tr>
+              <td>${trip.id}</td>
+              <td><strong>${trip.passengerName}</strong></td>
+              <td>${trip.passengerPhone}</td>
+              <td>${trip.driverName || 
+                  (allUsers.find(u => String(u.id) === String(trip.driverId))?.name || 'Not assigned')}</td>
+              <td>${trip.pickup}</td>
+              <td>${trip.destination}</td>
+              <td><span class="status-badge status-${trip.status}">${trip.status.toUpperCase()}</span></td>
+              <td class="action-buttons">
+                <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+  
+  function switchTab(tab) {
+    const usersTab = document.getElementById('usersTab');
+    const tripsTab = document.getElementById('tripsTab');
+    const btns = document.querySelectorAll('.tab-btn');
+    
+    if (tab === 'users') {
+      usersTab.classList.add('active');
+      tripsTab.classList.remove('active');
+      btns[0].classList.add('active');
+      btns[1].classList.remove('active');
+    } else {
+      usersTab.classList.remove('active');
+      tripsTab.classList.add('active');
+      btns[0].classList.remove('active');
+      btns[1].classList.add('active');
+    }
+  }
+  
+  function filterUsers() {
+    renderUsersTable();
+  }
+  
+  function filterTrips() {
+    renderTripsTable();
+  }
+  
+  function openEditProfileModal() {
+    const modalHtml = `
+      <div class="modal active" id="profileModal">
+        <div class="modal-content">
+          <div class="modal-header"><h3>Edit Profile</h3><span class="close-modal" onclick="closeModal()">&times;</span></div>
+          <form id="editProfileForm">
+            <div class="form-group"><label>First Name</label><input type="text" id="editName" value="${currentUser.name}" required></div>
+            <div class="form-group"><label>Surname</label><input type="text" id="editSurname" value="${currentUser.surname}" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="editPhone" value="${currentUser.phone}" required></div>
+            <div class="form-group"><label>Email</label><input type="email" id="editEmail" value="${currentUser.email}" required></div>
+            <button type="submit" class="btn-primary">Update Profile</button>
+          </form>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.getElementById('editProfileForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      currentUser.name = document.getElementById('editName').value.trim();
+      currentUser.surname = document.getElementById('editSurname').value.trim();
+      currentUser.phone = document.getElementById('editPhone').value.trim();
+      currentUser.email = document.getElementById('editEmail').value.trim();
+      
+      const userIndex = allUsers.findIndex(u => u.id === currentUser.id);
+      if (userIndex !== -1) {
+        allUsers[userIndex] = currentUser;
+        saveUsers();
+      }
+      localStorage.setItem('sr_current_user', JSON.stringify(currentUser));
+      closeModal();
+      renderDashboard();
+      showNotification('Profile updated successfully!', 'success');
+    });
+  }
+  
+  function openEditUserModal(userId) {
+    const user = allUsers.find(u => u.id === userId);
+    if (!user) return;
+    
+    const modalHtml = `
+      <div class="modal active" id="userModal">
+        <div class="modal-content">
+          <div class="modal-header"><h3>Edit User: ${user.name} ${user.surname}</h3><span class="close-modal" onclick="closeModal()">&times;</span></div>
+          <form id="editUserForm">
+            <div class="form-group"><label>First Name</label><input type="text" id="editName" value="${user.name}" required></div>
+            <div class="form-group"><label>Surname</label><input type="text" id="editSurname" value="${user.surname}" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="editPhone" value="${user.phone}" required></div>
+            <div class="form-group"><label>Email</label><input type="email" id="editEmail" value="${user.email}" required></div>
+            <div class="form-group"><label>ID Number</label><input type="text" id="editIdNumber" value="${user.idNumber}" required></div>
+            <div class="form-group"><label>Account Type</label>
+              <select id="editAccountType">
+                <option value="passenger" ${user.accountType === 'passenger' ? 'selected' : ''}>Passenger</option>
+                <option value="driver" ${user.accountType === 'driver' ? 'selected' : ''}>Driver</option>
+                <option value="admin" ${user.accountType === 'admin' ? 'selected' : ''}>Admin</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-primary">Update User</button>
+          </form>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.getElementById('editUserForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      user.name = document.getElementById('editName').value.trim();
+      user.surname = document.getElementById('editSurname').value.trim();
+      user.phone = document.getElementById('editPhone').value.trim();
+      user.email = document.getElementById('editEmail').value.trim();
+      user.idNumber = document.getElementById('editIdNumber').value.trim();
+      user.accountType = document.getElementById('editAccountType').value;
+      
+      const userIndex = allUsers.findIndex(u => u.id === userId);
+      if (userIndex !== -1) {
+        allUsers[userIndex] = user;
+        saveUsers();
+      }
+      
+      if (currentUser.id === userId) {
+        localStorage.setItem('sr_current_user', JSON.stringify(user));
+        currentUser = user;
+      }
+      
+      closeModal();
+      renderDashboard();
+      showNotification('User updated successfully!', 'success');
+    });
+  }
+  
+  function deleteUser(userId) {
+    if (userId === currentUser.id) {
+      showNotification('You cannot delete your own account here. Use "Delete My Account" button.', 'error');
+      return;
+    }
+    
+    if (confirm('Are you sure you want to delete this user? All their trips will also be deleted.')) {
+      allUsers = allUsers.filter(u => u.id !== userId);
+      allTrips = allTrips.filter(t => t.passengerId !== userId && t.driverId !== userId);
+      saveUsers();
+      saveTrips();
+      renderDashboard();
+      showNotification('User deleted successfully!', 'success');
+    }
+  }
+  
+  function deleteTrip(tripId) {
+    if (confirm('Are you sure you want to delete this trip?')) {
+      allTrips = allTrips.filter(t => t.id !== tripId);
+      saveTrips();
+      renderTripsTable();
+      showNotification('Trip deleted successfully!', 'success');
+    }
+  }
+  
+  function deleteAdminAccount() {
+    if (confirm('⚠️ WARNING: This will permanently delete your admin account. Are you sure?')) {
+      allUsers = allUsers.filter(u => u.id !== currentUser.id);
+      saveUsers();
+      localStorage.removeItem('sr_current_user');
+      window.location.href = 'login.html';
+    }
+  }
+  
+  function closeModal() {
+    const modal = document.querySelector('.modal');
+    if (modal) modal.remove();
+  }
+  
+  function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    const bgColor = type === 'success' ? 'var(--forest)' : 'var(--danger)';
+    notification.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: ${bgColor};
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      z-index: 1000;
+      animation: fadeInOut 3s ease;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+  }
+  
+  function logout() {
+    localStorage.removeItem('sr_current_user');
+    window.location.href = 'login.html';
+  }
+  
+  window.switchTab = switchTab;
+  window.filterUsers = filterUsers;
+  window.filterTrips = filterTrips;
+  window.openEditProfileModal = openEditProfileModal;
+  window.openEditUserModal = openEditUserModal;
+  window.deleteUser = deleteUser;
+  window.deleteTrip = deleteTrip;
+  window.closeModal = closeModal;
+  window.logout = logout;
+  
+  loadData();
+  window.onload = loadData;
+</script>
+</body>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>SecureRide — Driver Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --forest: #0b2e13;
+  --canopy: #1a5c32;
+  --leaf: #2ea85f;
+  --mint: #4ade80;
+  --sage: #d1fae5;
+  --cream: #f6faf7;
+  --white: #ffffff;
+  --ink: #0c1a10;
+  --slate: #374151;
+  --muted: #6b7280;
+  --border: #d1d5db;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --success: #059669;
+  --warning: #f59e0b;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.navbar {
+  background: var(--white);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--leaf), var(--mint));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--forest);
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--forest);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--slate);
+}
+
+.user-type-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--sage);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.logout-btn {
+  padding: 8px 16px;
+  border: 1.5px solid var(--border);
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 24px;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--sage);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-details {
+  display: grid;
+  gap: 12px;
+}
+
+.profile-row {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-label {
+  font-weight: 600;
+  width: 120px;
+  color: var(--muted);
+}
+
+.profile-value {
+  flex: 1;
+  color: var(--ink);
+}
+
+.edit-btn {
+  background: var(--leaf);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform 0.1s ease;
+}
+
+.edit-btn:hover {
+  background: var(--canopy);
+}
+
+.delete-account-btn {
+  background: var(--danger);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 100%;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.delete-account-btn:hover {
+  background: #b91c1c;
+}
+
+.trip-item {
+  background: var(--cream);
+  padding: 16px;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  transition: box-shadow 0.2s;
+}
+
+.trip-details {
+  flex: 1;
+}
+
+.trip-status {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.status-pending { background: #fef3c7; color: #b45309; }
+.status-accepted { background: #d1fae5; color: var(--success); }
+.status-completed { background: #e0e7ff; color: #1e40af; }
+
+.empty-state {
+  text-align: center;
+  padding: 44px 20px;
+  color: var(--muted);
+  background: var(--cream);
+  border-radius: 20px;
+}
+
+.btn-primary-sm {
+  background: linear-gradient(135deg, var(--canopy), var(--forest));
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.btn-primary-sm:hover {
+  transform: scale(0.97);
+  background: var(--forest);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.close-modal {
+  cursor: pointer;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.close-modal:hover {
+  color: var(--danger);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--slate);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--leaf);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--canopy), var(--forest));
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  font-size: 15px;
+  transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(20px); }
+}
+
+.notification-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--forest);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 40px;
+  font-weight: 500;
+  z-index: 1100;
+  animation: fadeInOut 3s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo">
+    <div class="logo-mark">SR</div>
+    <span class="logo-text">SecureRide</span>
+  </div>
+  <div class="user-info">
+    <span class="user-name" id="navUserName"></span>
+    <span class="user-type-badge" id="navUserType"></span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<div class="container" id="appContainer"></div>
+
+<script>
+  // ------------------- GLOBAL STATE -------------------
+  let currentUser = null;
+  let trips = [];
+  let users = [];
+
+  // ------------------- DATA HELPERS -------------------
+  function loadStorageData() {
+    const savedUser = localStorage.getItem('sr_current_user');
+    if (!savedUser) {
+      window.location.href = 'login.html';
+      return false;
+    }
+    try {
+      currentUser = JSON.parse(savedUser);
+    } catch(e) {
+      localStorage.removeItem('sr_current_user');
+      window.location.href = 'login.html';
+      return false;
+    }
+
+    if (!currentUser || currentUser.accountType !== 'driver') {
+      alert('Driver access only. Redirecting to login.');
+      window.location.href = 'login.html';
+      return false;
+    }
+
+    try {
+      trips = JSON.parse(localStorage.getItem('sr_trips')) || [];
+    } catch(e) { trips = []; }
+
+    try {
+      users = JSON.parse(localStorage.getItem('sr_users')) || [];
+    } catch(e) { users = []; }
+
+    return true;
+  }
+
+  function saveTrips() {
+    localStorage.setItem('sr_trips', JSON.stringify(trips));
+  }
+
+  function saveUsers() {
+    localStorage.setItem('sr_users', JSON.stringify(users));
+  }
+
+  function syncCurrentUserToStorage() {
+    // update users array & localStorage
+    const idx = users.findIndex(u => String(u.id) === String(currentUser.id));
+    if (idx !== -1) {
+      users[idx] = { ...currentUser };
+    } else {
+      users.push(currentUser);
+    }
+    saveUsers();
+    localStorage.setItem('sr_current_user', JSON.stringify(currentUser));
+  }
+
+  // ------------------- UI RENDER ENGINE (Passenger-like polished) -------------------
+  function renderDashboard() {
+    const container = document.getElementById('appContainer');
+    if (!container) return;
+
+    const fullName = `${currentUser.name || ''} ${currentUser.surname || ''}`.trim();
+    document.getElementById('navUserName').innerText = fullName || currentUser.name;
+    document.getElementById('navUserType').innerText = 'DRIVER';
+
+    container.innerHTML = `
+      <div class="dashboard-grid">
+        <!-- LEFT COLUMN: PROFILE & STATS -->
+        <div>
+          <div class="card">
+            <div class="card-title">
+              👤 My Profile
+              <button class="edit-btn" onclick="openEditProfileModal()">Edit</button>
+            </div>
+            <div class="profile-details">
+              <div class="profile-row"><span class="profile-label">Name:</span><span class="profile-value">${escapeHtml(currentUser.name || '')} ${escapeHtml(currentUser.surname || '')}</span></div>
+              <div class="profile-row"><span class="profile-label">Email:</span><span class="profile-value">${escapeHtml(currentUser.email || '')}</span></div>
+              <div class="profile-row"><span class="profile-label">Phone:</span><span class="profile-value">${escapeHtml(currentUser.phone || '')}</span></div>
+              <div class="profile-row"><span class="profile-label">ID Number:</span><span class="profile-value">${escapeHtml(currentUser.idNumber || '')}</span></div>
+              <div class="profile-row"><span class="profile-label">Role:</span><span class="profile-value">Driver · SecureRide Pro</span></div>
+            </div>
+
+${!currentUser.isVerified ? `
+<div class="card" style="border:2px solid var(--danger); background:var(--danger-bg);">
+  <div class="card-title">🚨 URGENT: Verification Required</div>
+  <p style="font-size:14px; margin-bottom:12px;">
+    You must upload your ID document to continue accepting rides.
+  </p>
+  <input type="file" id="idUpload" accept="image/*,.pdf" style="margin-bottom:12px;">
+  <button class="btn-primary" onclick="uploadID()">Upload ID</button>
+</div>
+` : ''}
+
+<div class="card">
+  <div class="card-title">
+    🚗 Vehicle Details
+    <button class="edit-btn" onclick="openVehicleModal()">Edit</button>
+  </div>
+  <div class="profile-details">
+    <div class="profile-row">
+      <span class="profile-label">Model:</span>
+      <span class="profile-value">${escapeHtml(currentUser.vehicleModel || 'Not added')}</span>
+    </div>
+    <div class="profile-row">
+      <span class="profile-label">Reg Number:</span>
+      <span class="profile-value">${escapeHtml(currentUser.vehicleReg || 'Not added')}</span>
+    </div>
+  </div>
+</div>
+
+<button class="delete-account-btn" onclick="deleteAccount()">🗑️ Delete my account</button>
+</div>
+          <div class="card">
+            <div class="card-title">
+              🏆 Driver Stats
+            </div>
+            <div class="profile-details">
+              <div class="profile-row"><span class="profile-label">Accepted trips:</span><span class="profile-value">${getMyTrips().length}</span></div>
+              <div class="profile-row"><span class="profile-label">Available requests:</span><span class="profile-value">${getAvailableTrips().length}</span></div>
+              <div class="profile-row"><span class="profile-label">Active status:</span><span class="profile-value" style="color:var(--leaf);">✅ Ready to ride</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: TRIP SECTIONS -->
+        <div>
+          <div class="card">
+            <div class="card-title">🌍 Available Ride Requests</div>
+            <div id="availableTripsList"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">🚀 My Accepted Rides</div>
+            <div id="driverTripsList"></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    renderAvailableTrips();
+    renderDriverTrips();
+  }
+
+  function getAvailableTrips() {
+    return trips.filter(t => t.status === 'pending');
+  }
+
+  function getMyTrips() {
+    return trips.filter(t => String(t.driverId) === String(currentUser.id));
+  }
+
+  function renderAvailableTrips() {
+    const container = document.getElementById('availableTripsList');
+    const available = getAvailableTrips();
+
+    if (!container) return;
+    if (available.length === 0) {
+      container.innerHTML = `<div class="empty-state">✨ No ride requests at the moment. Check back soon.</div>`;
+      return;
+    }
+
+    container.innerHTML = available.map(trip => `
+      <div class="trip-item">
+        <div class="trip-details">
+          <strong>📍 ${escapeHtml(trip.pickup)} → ${escapeHtml(trip.destination)}</strong><br>
+          <span style="font-size:13px;">👤 Passenger: ${escapeHtml(trip.passengerName || trip.passengerId)}</span><br>
+          <span class="trip-status status-pending">pending · ready for driver</span>
+        </div>
+        <button class="btn-primary-sm" onclick="acceptTrip(${trip.id})">✅ Accept ride</button>
+      </div>
+    `).join('');
+  }
+
+  function renderDriverTrips() {
+    const container = document.getElementById('driverTripsList');
+    const myTrips = getMyTrips();
+
+    if (!container) return;
+    if (myTrips.length === 0) {
+      container.innerHTML = `<div class="empty-state">🚗 You haven't accepted any trips yet. Grab one from the list!</div>`;
+      return;
+    }
+
+    container.innerHTML = myTrips.map(trip => `
+      <div class="trip-item">
+        <div class="trip-details">
+          <strong>🚕 ${escapeHtml(trip.pickup)} → ${escapeHtml(trip.destination)}</strong><br>
+          Passenger: ${escapeHtml(trip.passengerName || 'Rider')}<br>
+          <span class="trip-status status-${trip.status === 'accepted' ? 'accepted' : 'pending'}">${trip.status === 'accepted' ? 'ACCEPTED' : trip.status.toUpperCase()}</span>
+        </div>
+        ${trip.status === 'accepted' ? `<button class="edit-btn" style="background:var(--warning);" onclick="completeTrip(${trip.id})">✔️ Complete Trip</button>` : ''}
+      </div>
+    `).join('');
+  }
+
+  // ------------------- BUSINESS LOGIC (matches original driver logic with enhanced UX) -------------------
+  function acceptTrip(id) {
+    const tripIndex = trips.findIndex(t => String(t.id) === String(id));
+    if (tripIndex === -1) {
+      showNotification("Trip not found", "error");
+      return;
+    }
+    const trip = trips[tripIndex];
+    if (trip.status !== 'pending') {
+      showNotification("This trip is already taken!", "error");
+      renderDashboard();
+      return;
+    }
+
+    trip.status = 'accepted';
+    trip.driverId = currentUser.id;
+    trip.driverName = `${currentUser.name} ${currentUser.surname || ''}`.trim() || currentUser.name;
+    
+    saveTrips();
+    renderDashboard();
+    showNotification(`You accepted trip from ${trip.pickup} to ${trip.destination}`, "success");
+  }
+
+  function completeTrip(id) {
+    const trip = trips.find(t => String(t.id) === String(id));
+    if (!trip || String(trip.driverId) !== String(currentUser.id)) return;
+    if (trip.status === 'completed') {
+      showNotification("Trip already completed", "info");
+      return;
+    }
+    trip.status = 'completed';
+    saveTrips();
+    renderDashboard();
+    showNotification("Trip completed! Safe driving. 🌟", "success");
+  }
+
+  // ------------------- PROFILE MANAGEMENT (modal style matching passenger dashboard) -------------------
+  function openEditProfileModal() {
+    const modalHtml = `
+      <div class="modal active" id="profileModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>✏️ Edit Driver Profile</h3>
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+          </div>
+          <form id="editProfileForm">
+            <div class="form-group"><label>First Name</label><input type="text" id="editName" value="${escapeHtml(currentUser.name || '')}" required></div>
+            <div class="form-group"><label>Surname</label><input type="text" id="editSurname" value="${escapeHtml(currentUser.surname || '')}" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="editPhone" value="${escapeHtml(currentUser.phone || '')}" required></div>
+            <div class="form-group"><label>Email</label><input type="email" id="editEmail" value="${escapeHtml(currentUser.email || '')}" required></div>
+            <button type="submit" class="btn-primary">Update Profile</button>
+          </form>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.getElementById('editProfileForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      currentUser.name = document.getElementById('editName').value.trim();
+      currentUser.surname = document.getElementById('editSurname').value.trim();
+      currentUser.phone = document.getElementById('editPhone').value.trim();
+      currentUser.email = document.getElementById('editEmail').value.trim();
+      
+      // update users master list
+      const userIndex = users.findIndex(u => String(u.id) === String(currentUser.id));
+      if (userIndex !== -1) {
+        users[userIndex] = { ...currentUser };
+      } else {
+        users.push(currentUser);
+      }
+      saveUsers();
+      localStorage.setItem('sr_current_user', JSON.stringify(currentUser));
+      closeModal();
+      renderDashboard();
+      showNotification("Profile updated successfully!", "success");
+    });
+  }
+
+  function deleteAccount() {
+    if (!confirm("⚠️ PERMANENT ACTION: Delete your driver account and all associated data? This cannot be undone.")) return;
+    
+    // Remove user from users list
+    users = users.filter(u => String(u.id) !== String(currentUser.id));
+    saveUsers();
+    
+    // Remove trips where this driver was assigned (optional but clean)
+    trips = trips.filter(t => String(t.driverId) !== String(currentUser.id));
+    saveTrips();
+    
+    localStorage.removeItem('sr_current_user');
+    showNotification("Account permanently deleted", "info");
+    setTimeout(() => {
+      window.location.href = 'register.html';
+    }, 800);
+  }
+
+  // ------------------- HELPER & UTILITIES -------------------
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+      return c;
+    });
+  }
+
+  function showNotification(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = 'notification-toast';
+    const bgColor = type === 'success' ? 'var(--forest)' : (type === 'error' ? 'var(--danger)' : 'var(--warning)');
+    toast.style.background = bgColor;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  function closeModal() {
+    const modal = document.querySelector('.modal');
+    if (modal) modal.remove();
+  }
+
+  function logout() {
+    localStorage.removeItem('sr_current_user');
+    window.location.href = 'login.html';
+  }
+
+  // ------------------- GLOBAL EXPOSURE (for inline onclick) -------------------
+  window.acceptTrip = acceptTrip;
+  window.completeTrip = completeTrip;
+  window.openEditProfileModal = openEditProfileModal;
+  window.deleteAccount = deleteAccount;
+  window.closeModal = closeModal;
+  window.logout = logout;
+
+  // ------------------- INITIALIZE APP -------------------
+  function init() {
+    const isLoaded = loadStorageData();
+    if (!isLoaded) return;
+    // fallback: ensure driver always has consistent data structure
+    if (!currentUser.surname) currentUser.surname = '';
+    if (!currentUser.name) currentUser.name = 'Driver';
+    renderDashboard();
+  }
+
+  function openVehicleModal() {
+  const modalHtml = `
+    <div class="modal active">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>🚗 Vehicle Information</h3>
+          <span class="close-modal" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="vehicleForm">
+          <div class="form-group">
+            <label>Car Model</label>
+            <input type="text" id="vehicleModel" value="${escapeHtml(currentUser.vehicleModel || '')}" required>
+          </div>
+          <div class="form-group">
+            <label>Registration Number</label>
+            <input type="text" id="vehicleReg" value="${escapeHtml(currentUser.vehicleReg || '')}" required>
+          </div>
+          <button class="btn-primary">Save Vehicle</button>
+        </form>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  document.getElementById('vehicleForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    currentUser.vehicleModel = document.getElementById('vehicleModel').value.trim();
+    currentUser.vehicleReg = document.getElementById('vehicleReg').value.trim();
+
+    syncCurrentUserToStorage();
+    closeModal();
+    renderDashboard();
+    showNotification("Vehicle details saved 🚗", "success");
+  });
+}
+function uploadID() {
+  const fileInput = document.getElementById('idUpload');
+
+  if (!fileInput || !fileInput.files.length) {
+    showNotification("Please select a document first", "error");
+    return;
+  }
+
+  // Simulate upload (since you're using localStorage)
+  currentUser.isVerified = true;
+
+  syncCurrentUserToStorage();
+  renderDashboard();
+
+  showNotification("ID uploaded. You are now verified ✅", "success");
+}
+
+  init();
+</script>
+</body>
+</html>
